@@ -1,0 +1,69 @@
+
+.landing {
+  display: flex;
+  height: 100vh;
+  align-items: center;
+  justify-content: space-around;
+  color: white;
+
+  background-image: url('/bg1.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.landing-left {
+  max-width: 420px;
+}
+
+.landing-left h1 {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.landing-left p {
+  font-size: 18px;
+  margin-bottom: 20px;
+  opacity: 0.9;
+ 
+}
+
+.landing-left ul {
+  list-style: none;
+  padding: 0;
+}
+
+.landing-left li {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+.landing-right {
+  max-width: 400px;
+  margin-right: 60px;
+}
+.brand-box {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.brand-wrap {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.brand-title {
+  font-size: 50px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #0f766e;   /* rich teal */
+}
+
+.brand-sub {
+  font-size: 16px;
+  letter-spacing: 5px;
+  
+}
+
+
+
+

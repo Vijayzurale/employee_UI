@@ -1,0 +1,64 @@
+/* MAIN CARD — glass style */
+.card{
+  border-radius:16px;
+  background: rgba(255,255,255,0.18) !important;
+  border: none !important;
+
+}
+
+/* HEADER */
+.card-header{
+  font-weight:700;
+  text-align:center;
+  font-size:18px;
+  text-decoration: underline;
+  border: none !important;
+
+  
+}
+.table{
+    border: none !important;
+}
+
+.table tbody tr:hover{
+  background:white;
+
+}
+.table th{
+    background:rgb(128, 151, 164);
+    color:black;
+    border: none !important;
+
+}
+.table td {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* FORM */
+.form-label{
+  font-weight:700;
+  text-decoration: underline;
+
+}
+
+/* DROPDOWN FIX */
+.dropdown-fix,
+.form-select{
+  position: relative;
+  z-index: 3000;
+}
+
+/* BODY FIX */
+.card-body{
+  overflow: visible !important;
+}
+
+/* BUTTON HOVER (nice effect) */
+.btn{
+  transition: 0.3s ease;
+}
+
+.btn:hover{
+  transform: translateY(-2px);
+}

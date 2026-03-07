@@ -1,0 +1,38 @@
+<div class="parent">
+
+
+<div class="login-card">
+        <h4 class="login-title">Login</h4>
+
+        <form>
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="fa-solid fa-envelope"></i>
+                    </span>
+                    <input type="email" [(ngModel)]="loginobj.email" name="email" class="form-control" placeholder="Enter email">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Contact No</label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="fa-solid fa-phone"></i>
+                    </span>
+                    <input type="password" [(ngModel)]="loginobj.contactNo"  name="contactNo" class="form-control" placeholder="Enter contact no">
+                </div>
+            </div>
+
+            <div class="d-grid">
+                <button type="button" (click)="onlogin()" class="btn  btn-login">
+                    Login
+                </button>
+            </div>
+
+            <div class="text-center mt-3 ">
+             <small>Don't have an account?<a routerLink="/register">Register</a></small>
+            </div>
+        </form>
+    </div>
+    </div>

@@ -1,0 +1,81 @@
+<div class="container mt-7">
+
+    <div class="card ">
+
+        <div class="card-header">
+            Department Management
+        </div>
+
+        <div class="card-body">
+
+            <!-- TABLE FIRST -->
+            <table class="table  table-hover text-center">
+
+                <thead>
+                    <tr>
+                        <th>Sr No</th>
+                        <th>Department Name</th>
+                        <th>Is Active</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @for (item of deptList(); track $index) {
+                    <tr>
+                        <td>{{$index + 1}}</td>
+                        <td>{{item.departmentName}}</td>
+                        <td>{{ item.isActive ? 'Active' : 'Inactive' }}</td>
+                        <td>
+                            <div class="d-flex justify-content-center gap-3">
+                                <button class="btn btn-warning btn-sm mx-2" (click)="onEdit(item)">Edit</button>
+                                <button class="btn btn-danger btn-sm"
+                                    (click)="onDelete(item.departmentId)">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+
+            </table>
+
+            <div class="row align-items-end mt-4 g-4">
+
+                <div class="col-md-3">
+                    <label class="form-label">Department Name</label>
+                    <input type="text" [(ngModel)]="newDeptObj.departmentName" class="form-control"
+                        placeholder="Enter department name">
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Is Active</label>
+                    <select class="form-select dropdown-fix" [(ngModel)]="newDeptObj.isActive">
+                        <option [ngValue]="true">Active</option>
+                        <option [ngValue]="false">Inactive</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    @if(newDeptObj.departmentId == 0){
+                    <button (click)="onSaveDept()" class="btn btn-success w-100 fw-bold">
+                        Save
+                    </button>
+                    }
+                    @else{
+                    <button (click)="onUpdateDept()" class="btn btn-warning w-100 fw-bold">
+                        Update
+                    </button>
+                    }
+                </div>
+
+                <div class="col-md-2">
+                    <button class="btn btn-secondary w-100 fw-bold" (click)="onReset()">
+                        Reset
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>

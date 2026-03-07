@@ -1,0 +1,91 @@
+<div class="container mt-4">
+
+  <div class="card shadow">
+
+    <div class="card-header ">
+      Designation Management
+    </div>
+
+    <div class="card-body">
+
+      <form [formGroup]="designationForm">
+
+        <table class="table table-bordered text-center">
+
+          <thead class="table-light">
+            <tr>
+              <th>Sr No</th>
+              <th>Department</th>
+              <th>Designation</th>
+              <th>Action</th>
+            </tr>
+
+
+          </thead>
+
+          <tbody>
+     
+
+            @for (item of $designationList | async; track item.designationId)
+            {
+            <tr>
+              <td>{{ $index + 1 }}</td>
+              <td>{{ item.departmentName }}</td>
+              <td>{{ item.designationName }}</td>
+              <td>
+                <button class="btn btn-warning btn-sm me-2" (click)="onEdit(item)">
+                  Edit
+                </button>
+                <button class="btn btn-danger btn-sm" (click)="onDelete(item.designationId)">
+                  Delete
+                </button>
+              </td>
+            </tr>
+            }
+            
+
+
+          </tbody>
+
+
+        </table>
+        <div class="row g-3 mb-4 align-items-end">
+
+          <div class="col-md-3">
+            <label class="form-label fw-bold">Department</label>
+            <select class="form-select" formControlName="departmentId">
+              <option value="">Select Department</option>
+              @for (dept of departmentList; track dept.departmentId) {
+              <option [value]="dept.departmentId">
+                {{ dept.departmentName }}
+              </option>
+              }
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label fw-bold">Designation</label>
+            <input class="form-control" formControlName="designationName">
+          </div>
+
+          <div class="col-md-2">
+            <button type="button" class="btn btn-success w-100 fw-bold" (click)="onSave()">
+
+              {{ isEditMode ? 'Update' : 'Save' }}
+
+            </button>
+          </div>
+
+          <div class="col-md-2">
+            <button type="button" class="btn btn-secondary w-100 fw-bold" (click)="resetForm()">
+              Reset
+            </button>
+          </div>
+        </div>
+
+
+      </form>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,59 @@
+ .parent {
+     height: 100vh;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+}
+ .login-card {
+     padding-left:20px;
+     width: 100%;
+     max-width: 500px;
+     padding: 28px;
+     border-radius: 15px;
+
+     animation: slideUp 1s ease-in-out;
+     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+     /* background: linear-gradient(135deg,#778990,#809096,#8ca0a8); */
+ 
+}
+ 
+
+ @keyframes slideUp {
+     from {
+         transform: translateY(50px);
+         opacity: 0;
+     }
+
+     to {
+         transform: translateY(0);
+         opacity: 1;
+     }
+ }
+
+ .form-control {
+     border-radius: 10px;
+ }
+
+ .btn-login {
+     border-radius: 10px;
+     transition: transform 0.3s ease;
+     background: linear-gradient(135deg,#a8bdc5,#809096,#8ca0a8);
+     color:black;
+         
+ }
+
+ .btn-login:hover {
+     transform: scale(1.05);
+ }
+
+ .login-title {
+     font-weight: bold;
+     text-align: center;
+     margin-bottom: 20px;
+     color:black;
+     
+ }
+ .mb-3{
+    color: black;
+ }
+

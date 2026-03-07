@@ -1,0 +1,62 @@
+<div class="profile-page">
+
+  <div class="profile-banner"></div>
+
+  <div class="profile-card">
+
+    <div class="profile-top">
+
+      <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+           class="profile-img">
+
+      <h2>{{employeeObj.name}}</h2>
+
+      <span class="role-badge">{{employeeObj.role}}</span>
+
+    </div>
+
+    <div class="profile-info">
+
+      <div class="info-row">
+        <label>Email</label>
+        <span>{{employeeObj.email}}</span>
+      </div>
+
+      <div class="info-row">
+        <label>Contact</label>
+        <span>{{employeeObj.contactNo}}</span>
+      </div>
+
+      <div class="info-row">
+        <label>Department</label>
+        <span>{{employeeObj.departmentName}}</span>
+      </div>
+
+      <div class="info-row">
+        <label>Designation</label>
+        <span>{{employeeObj.designationName}}</span>
+      </div>
+
+      <div class="info-row">
+        <label>City</label>
+        <span>{{employeeObj.city}}</span>
+      </div>
+
+      <div class="info-row">
+        <label>Pincode</label>
+        <span>{{employeeObj.pincode}}</span>
+      </div>
+
+    </div>
+
+    <div class="profile-actions">
+
+      <button routerLink="/employee-list" class="back-btn">
+        ← Back to List
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

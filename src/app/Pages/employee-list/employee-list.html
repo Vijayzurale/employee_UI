@@ -1,0 +1,45 @@
+<div class="table-wrapper">
+
+  <h4 class="table-title">Employee List</h4>
+
+  <table class="employee-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Contact</th>
+        <th>Email</th>
+        <th>Designation</th>
+        <th>Department</th>
+        <th>City</th>
+        <th>Role</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @for(emp of EmployeeList(); track $index){
+        <tr>
+          <td>{{$index + 1}}</td>
+<td>
+    <a [routerLink]="['/employee-profile', emp.employeeId]" class="profile-link"
+          data-text="View Profile" >{{emp.name}}</a> </td>
+          <td>{{emp.contactNo}}</td>
+          <td>{{emp.email}}</td>
+          <td>{{emp.designationName}}</td>
+          <td>{{emp.departmentName}}</td>
+          <td>{{emp.city}}</td>
+         
+          <td>
+            <span class="role-badge">{{emp.role}}</span>
+          </td>
+          <td>
+            <button [routerLink]="'/New-Employee/' + emp.employeeId" class="edit-btn ">Edit</button>
+            <button class="delete-btn"  (click)="ondelete(emp.employeeId)">Delete</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+</div>

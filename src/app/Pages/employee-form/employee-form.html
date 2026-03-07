@@ -1,0 +1,124 @@
+<form #empForm="ngForm">
+
+<div class="container employee-form mt-5">
+  <div class="card employee-card">
+
+    <div class="card-header">
+      Employee Form
+    </div>
+
+    <div class="card-body">
+
+      <!-- Personal Details -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-4">
+          <label>Full Name</label>
+          <input class="form-control" [(ngModel)]="newEmployeeObj.name" name="name" required>
+        </div>
+
+        <div class="col-md-4">
+          <label>Contact Number</label>
+          <input class="form-control"
+       [(ngModel)]="newEmployeeObj.contactNo"
+       name="contactNo"
+       required
+       minlength="10"
+       maxlength="10">
+        </div>
+
+        <div class="col-md-4">
+          <label>Alternate Contact</label>
+          <input class="form-control" [(ngModel)]="newEmployeeObj.altContactNo" name="altContactNo">
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <label>Email</label>
+          <input class="form-control" [(ngModel)]="newEmployeeObj.email" name="email">
+        </div>
+      </div>
+
+      <!-- Address -->
+      <div class="mb-4">
+        <label>Full Address</label>
+        <textarea class="form-control" rows="2"
+          [(ngModel)]="newEmployeeObj.address" name="address"></textarea>
+      </div>
+
+      <!-- City State Pincode -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-4">
+          <label>City</label>
+          <input class="form-control" [(ngModel)]="newEmployeeObj.city" name="city">
+        </div>
+
+        <div class="col-md-4">
+          <label>State</label>
+          <input class="form-control" [(ngModel)]="newEmployeeObj.state" name="state">
+        </div>
+
+        <div class="col-md-4">
+          <label>Pincode</label>
+          <input class="form-control" [(ngModel)]="newEmployeeObj.pincode" name="pincode">
+        </div>
+      </div>
+
+      <!-- Designation Role -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-6">
+          <label>Designation</label>
+          <select class="form-select"
+            [(ngModel)]="newEmployeeObj.designationId"
+            name="designationId" required>
+
+            <option [ngValue]="null">Select Designation</option>
+            @for (item of $designationList | async; track $index) {
+              <option [ngValue]="item.designationId">
+                {{ item.designationName }}
+              </option>
+            }
+          </select>
+        </div>
+
+        <div class="col-md-6">
+          <label>Role</label>
+          <select class="form-select"
+            [(ngModel)]="newEmployeeObj.role"
+            name="role" required>
+            <option value="">Select Role</option>
+            <option>HR</option>
+            <option>Employee</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="action-row">
+
+        <button type="button" class="btn btn-outline"
+                (click)="onReset(empForm)">
+          Reset
+        </button>
+
+        @if(newEmployeeObj.employeeId == 0){
+          <button type="button" class="btn btn-success"
+
+              (click)="onsaveEmp(empForm)">
+            Save Employee
+          </button>
+        }@else {
+          <button type="button" class="btn btn-warning"
+                  (click)="onupdateEmp()">
+            Update Employee
+          </button>
+        }
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</form>

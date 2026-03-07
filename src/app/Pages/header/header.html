@@ -1,0 +1,86 @@
+<div class="admin-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" [class.collapsed]="collapsed">
+
+    <div class="brand">
+      ADMIN
+    </div>
+   @if(loggedEmpData.role =="HR"){
+
+    <nav>
+
+      <a routerLink="/dashboard"
+         routerLinkActive="active"
+         class="nav-item">
+        <i class="fa-solid fa-gauge"></i>
+        <span *ngIf="!collapsed">Dashboard</span>
+      </a>
+      <a routerLink="/New-Employee/0"
+         routerLinkActive="active"
+         class="nav-item">
+        <i class="fa-solid fa-users"></i>
+        <span *ngIf="!collapsed">New Employee</span>
+      </a>
+
+      <a routerLink="/employee-list"
+         routerLinkActive="active"
+         class="nav-item">
+        <i class="fa-solid fa-users"></i>
+        <span *ngIf="!collapsed">EmployeeList</span>
+      </a>
+
+      <a routerLink="/departments"
+         routerLinkActive="active"
+         class="nav-item">
+        <i class="fa-solid fa-building"></i>
+        <span *ngIf="!collapsed">Departments</span>
+      </a>
+
+      <a routerLink="/designations"
+         routerLinkActive="active"
+         class="nav-item">
+        <i class="fa-solid fa-id-badge"></i>
+        <span *ngIf="!collapsed">Designations</span>
+      </a>
+
+      <a routerLink="/reports"
+         routerLinkActive="active"
+         class="nav-item">
+        <i class="fa-solid fa-file-lines"></i>
+        <span *ngIf="!collapsed">Reports</span>
+      </a>
+
+      <a routerLink="/settings"
+         routerLinkActive="active"
+         class="nav-item">
+        <i class="fa-solid fa-gear"></i>
+        <span *ngIf="!collapsed">Settings</span>
+      </a>
+
+      
+
+    </nav>
+  }
+  <a (click)="onLogOff()" routerLink="/logout"
+         class="nav-item logout">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span *ngIf="!collapsed">Logout</span>
+      </a>
+  </aside>
+
+  <!-- MAIN AREA -->
+  <section class="main-area">
+
+    <header class="topbar">
+      <i class="fa-solid fa-bars toggle" (click)="toggleSidebar()"></i>
+      <h6>Admin Dashboard</h6>
+    </header>
+
+    <main class="content">
+      <router-outlet></router-outlet>
+    </main>
+
+  </section>
+
+</div>
