@@ -1,91 +1,82 @@
-<div class="container mt-4">
-
-  <div class="card shadow">
-
-    <div class="card-header ">
-      Designation Management
-    </div>
-
-    <div class="card-body">
-
-      <form [formGroup]="designationForm">
-
-        <table class="table table-bordered text-center">
-
-          <thead class="table-light">
-            <tr>
-              <th>Sr No</th>
-              <th>Department</th>
-              <th>Designation</th>
-              <th>Action</th>
-            </tr>
-
-
-          </thead>
-
-          <tbody>
-     
-
-            @for (item of $designationList | async; track item.designationId)
-            {
-            <tr>
-              <td>{{ $index + 1 }}</td>
-              <td>{{ item.departmentName }}</td>
-              <td>{{ item.designationName }}</td>
-              <td>
-                <button class="btn btn-warning btn-sm me-2" (click)="onEdit(item)">
-                  Edit
-                </button>
-                <button class="btn btn-danger btn-sm" (click)="onDelete(item.designationId)">
-                  Delete
-                </button>
-              </td>
-            </tr>
-            }
-            
-
-
-          </tbody>
-
-
-        </table>
-        <div class="row g-3 mb-4 align-items-end">
-
-          <div class="col-md-3">
-            <label class="form-label fw-bold">Department</label>
-            <select class="form-select" formControlName="departmentId">
-              <option value="">Select Department</option>
-              @for (dept of departmentList; track dept.departmentId) {
-              <option [value]="dept.departmentId">
-                {{ dept.departmentName }}
-              </option>
-              }
-            </select>
-          </div>
-
-          <div class="col-md-3">
-            <label class="form-label fw-bold">Designation</label>
-            <input class="form-control" formControlName="designationName">
-          </div>
-
-          <div class="col-md-2">
-            <button type="button" class="btn btn-success w-100 fw-bold" (click)="onSave()">
-
-              {{ isEditMode ? 'Update' : 'Save' }}
-
-            </button>
-          </div>
-
-          <div class="col-md-2">
-            <button type="button" class="btn btn-secondary w-100 fw-bold" (click)="resetForm()">
-              Reset
-            </button>
-          </div>
-        </div>
-
-
-      </form>
-
+<section class="management-page">
+  <div class="page-header">
+    <div>
+      <h4>Designation Management</h4>
+      <span>{{ ($designationList | async)?.length || 0 }} designations</span>
     </div>
   </div>
-</div>
+
+  <div *ngIf="deleteMessage" class="notice">
+    {{ deleteMessage }}
+  </div>
+
+  <form [formGroup]="designationForm">
+    <div class="editor-panel">
+      <div class="field-group department-field">
+        <label class="form-label">Department</label>
+        <select class="form-select" formControlName="departmentId">
+          <option value="">Select Department</option>
+          <option *ngFor="let dept of departmentList; let i = index" [value]="dept.departmentId">
+            {{ dept.departmentName }}
+          </option>
+        </select>
+      </div>
+
+      <div class="field-group designation-field">
+        <label class="form-label">Designation</label>
+        <input class="form-control" formControlName="designationName" placeholder="Enter designation name" />
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="primary-btn" [class.update-btn]="isEditMode" (click)="onSave()">
+          {{ isEditMode ? 'Update' : 'Save' }}
+        </button>
+        <button type="button" class="muted-btn" (click)="resetForm()">Reset</button>
+      </div>
+    </div>
+
+    <div class="table-shell">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="number-col">#</th>
+            <th>Designation</th>
+            <th>Department</th>
+            <th>Status</th>
+            <th>Assigned</th>
+            <th class="action-col">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <ng-container *ngIf="$designationList | async as designations">
+            <tr *ngIf="designations.length === 0">
+              <td colspan="6" class="empty-row">No designations found.</td>
+            </tr>
+            <tr *ngFor="let item of designations; let i = index">
+              <td class="number-col">{{ i + 1 }}</td>
+              <td>
+                <span class="name-cell">{{ item.designationName }}</span>
+              </td>
+              <td>{{ item.departmentName }}</td>
+              <td>
+                <span class="status-badge" [class.inactive]="getDepartmentStatus(item.departmentId) === 'Inactive'">
+                  {{ getDepartmentStatus(item.departmentId) }}
+                </span>
+              </td>
+              <td>{{ employeeCountMap[item.designationId] || 0 }}</td>
+              <td>
+                <div class="row-actions">
+                  <button class="edit-btn" type="button" (click)="onEdit(item)">Edit</button>
+                  <button class="delete-btn" type="button" (click)="onDelete(item.designationId)">
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </form>
+</section>

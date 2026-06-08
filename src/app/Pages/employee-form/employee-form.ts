@@ -1,17 +1,17 @@
 import { Master } from './../../services/master';
 import { DesignationModel } from './../../models/Department.model';
 import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { EmployeeModel } from '../../models/Employee.Model';
 import { FormsModule } from '@angular/forms';
 import { EmployeeService } from '../../services/employee-service';
 import { Observable } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Route } from '@angular/router';
 
 @Component({
   selector: 'app-employee-form',
-  imports: [FormsModule, AsyncPipe],
+  imports: [CommonModule, FormsModule, AsyncPipe],
   templateUrl: './employee-form.html',
   styleUrl: './employee-form.css',
 })
@@ -31,8 +31,10 @@ export class EmployeeForm {
     this.$designationList = this.MasterService.getAllDesignations();
 
     this.activeRoute.params.subscribe((res: any) => {
-      if (res.id !== 0) {
-        this.newEmployeeObj.employeeId = res.id;
+      const employeeId = Number(res.id);
+
+      if (employeeId > 0) {
+        this.newEmployeeObj.employeeId = employeeId;
         this.getEmpById();
       }
     });
@@ -42,7 +44,10 @@ export class EmployeeForm {
     this.employeeService.getEmpById(this.newEmployeeObj.employeeId).subscribe({
       next: (result) => {
         this.newEmployeeObj = result;
-      }
+      },
+      error: (err) => {
+        console.log('Get employee failed:', err);
+      },
     });
   }
 
@@ -50,12 +55,10 @@ export class EmployeeForm {
 
     this.employeeService.saveEmployee(this.newEmployeeObj).subscribe({
       next: () => {
-        alert('Employee saved successfully!');
         form.resetForm();   // ✅ PROPER RESET
         this.Router.navigate(['/employee-list']);
       },
       error: () => {
-        alert('Employee failed!');
       }
     });
   }
@@ -66,10 +69,9 @@ export class EmployeeForm {
       this.newEmployeeObj
     ).subscribe({
       next: () => {
-        alert('Employee updated successfully!');
+        this.Router.navigate(['/employee-list']);
       },
       error: () => {
-        alert('Employee update failed!');
       }
     });
   }

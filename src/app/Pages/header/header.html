@@ -6,67 +6,61 @@
     <div class="brand">
       ADMIN
     </div>
-   @if(loggedEmpData.role =="HR"){
 
     <nav>
+      <ng-container *ngIf="loggedEmpData.role === 'HR'">
+        <a routerLink="/dashboard" routerLinkActive="active" class="nav-item" data-tooltip="Dashboard">
+          <i class="fa-solid fa-gauge"></i>
+          <span *ngIf="!collapsed">Dashboard</span>
+        </a>
+        <a routerLink="/New-Employee/0" routerLinkActive="active" class="nav-item" data-tooltip="New Employee">
+          <i class="fa-solid fa-user-plus"></i>
+          <span *ngIf="!collapsed">New Employee</span>
+        </a>
 
-      <a routerLink="/dashboard"
-         routerLinkActive="active"
-         class="nav-item">
-        <i class="fa-solid fa-gauge"></i>
-        <span *ngIf="!collapsed">Dashboard</span>
-      </a>
-      <a routerLink="/New-Employee/0"
-         routerLinkActive="active"
-         class="nav-item">
-        <i class="fa-solid fa-users"></i>
-        <span *ngIf="!collapsed">New Employee</span>
-      </a>
+        <a routerLink="/employee-list" routerLinkActive="active" class="nav-item" data-tooltip="Employee List">
+          <i class="fa-solid fa-users"></i>
+          <span *ngIf="!collapsed">Employee List</span>
+        </a>
 
-      <a routerLink="/employee-list"
-         routerLinkActive="active"
-         class="nav-item">
-        <i class="fa-solid fa-users"></i>
-        <span *ngIf="!collapsed">EmployeeList</span>
-      </a>
+        <a routerLink="/departments" routerLinkActive="active" class="nav-item" data-tooltip="Departments">
+          <i class="fa-solid fa-building"></i>
+          <span *ngIf="!collapsed">Departments</span>
+        </a>
 
-      <a routerLink="/departments"
-         routerLinkActive="active"
-         class="nav-item">
-        <i class="fa-solid fa-building"></i>
-        <span *ngIf="!collapsed">Departments</span>
-      </a>
+        <a routerLink="/designations" routerLinkActive="active" class="nav-item" data-tooltip="Designations">
+          <i class="fa-solid fa-id-badge"></i>
+          <span *ngIf="!collapsed">Designations</span>
+        </a>
+      </ng-container>
 
-      <a routerLink="/designations"
-         routerLinkActive="active"
-         class="nav-item">
-        <i class="fa-solid fa-id-badge"></i>
-        <span *ngIf="!collapsed">Designations</span>
+      <a routerLink="/attendance" routerLinkActive="active" class="nav-item" data-tooltip="Attendance">
+        <i class="fa-solid fa-clock"></i>
+        <span *ngIf="!collapsed">Attendance</span>
       </a>
 
-      <a routerLink="/reports"
-         routerLinkActive="active"
-         class="nav-item">
+      <a routerLink="/leave" routerLinkActive="active" class="nav-item" data-tooltip="Leave">
+        <i class="fa-solid fa-calendar-check"></i>
+        <span *ngIf="!collapsed">Leave</span>
+      </a>
+
+
+      <a routerLink="/reports" routerLinkActive="active" class="nav-item" data-tooltip="Reports">
         <i class="fa-solid fa-file-lines"></i>
         <span *ngIf="!collapsed">Reports</span>
       </a>
 
-      <a routerLink="/settings"
-         routerLinkActive="active"
-         class="nav-item">
+
+      <a routerLink="/settings" routerLinkActive="active" class="nav-item" data-tooltip="Settings">
         <i class="fa-solid fa-gear"></i>
         <span *ngIf="!collapsed">Settings</span>
       </a>
-
-      
-
     </nav>
-  }
-  <a (click)="onLogOff()" routerLink="/logout"
-         class="nav-item logout">
-        <i class="fa-solid fa-right-from-bracket"></i>
-        <span *ngIf="!collapsed">Logout</span>
-      </a>
+
+    <a (click)="onLogOff()" routerLink="/logout" class="nav-item logout" data-tooltip="Logout">
+      <i class="fa-solid fa-right-from-bracket"></i>
+      <span *ngIf="!collapsed">Logout</span>
+    </a>
   </aside>
 
   <!-- MAIN AREA -->

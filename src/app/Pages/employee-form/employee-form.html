@@ -74,11 +74,9 @@
             name="designationId" required>
 
             <option [ngValue]="null">Select Designation</option>
-            @for (item of $designationList | async; track $index) {
-              <option [ngValue]="item.designationId">
-                {{ item.designationName }}
-              </option>
-            }
+            <option *ngFor="let item of $designationList | async; let i = index" [ngValue]="item.designationId">
+              {{ item.designationName }}
+            </option>
           </select>
         </div>
 
@@ -102,18 +100,17 @@
           Reset
         </button>
 
-        @if(newEmployeeObj.employeeId == 0){
-          <button type="button" class="btn btn-success"
-
-              (click)="onsaveEmp(empForm)">
-            Save Employee
-          </button>
-        }@else {
+        <button *ngIf="newEmployeeObj.employeeId === 0; else updateButton"
+                type="button" class="btn btn-success"
+                (click)="onsaveEmp(empForm)">
+          Save Employee
+        </button>
+        <ng-template #updateButton>
           <button type="button" class="btn btn-warning"
                   (click)="onupdateEmp()">
             Update Employee
           </button>
-        }
+        </ng-template>
 
       </div>
 

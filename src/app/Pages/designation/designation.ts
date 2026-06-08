@@ -1,40 +1,50 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Master } from '../../services/master';
-import { DepartmentModel, DesignationListModel, DesignationModel } from '../../models/Department.model';
 import { AsyncPipe } from '@angular/common';
-import { Observable,BehaviorSubject, switchMap } from 'rxjs';
+import { Observable, BehaviorSubject, switchMap } from 'rxjs';
+import { EmployeeService } from '../../services/employee-service';
 
 @Component({
   selector: 'app-designation',
   standalone: true,
-  imports: [ReactiveFormsModule,AsyncPipe],
+  imports: [CommonModule, ReactiveFormsModule, AsyncPipe],
   templateUrl: './designation.html',
   styleUrl: './designation.css',
 })
 export class Designation implements OnInit {
-   private refresh$ = new BehaviorSubject<void>(undefined);
+
+  // Use a numeric timestamp so each refresh emits a new, unique value
+  private refresh$ = new BehaviorSubject<number>(Date.now());
 
   masterService = inject(Master);
+  employeeService = inject(EmployeeService);
   fb = inject(FormBuilder);
 
   designationForm!: FormGroup;
 
-   $designationList: Observable<DesignationListModel[]>= new Observable<DesignationListModel[]>();
-   departmentList: any[] = [];
+  $designationList!: Observable<any[]>;
+  departmentList: any[] = [];
+  departmentStatusMap: Record<number, boolean> = {};
+  employeeCountMap: Record<number, number> = {};
 
   isEditMode = false;
   isLoading = signal(false);
-
+  deleteMessage = '';
 
   ngOnInit() {
     this.$designationList = this.refresh$.pipe(
-  switchMap(() => this.masterService.getAllDesignations())
-);
+      switchMap(() => this.masterService.getAllDesignations())
+    );
+
     this.createForm();
     this.loadDesignations();
     this.loadDepartments();
+    this.loadEmployeeCounts();
   }
+
+  // ================= FORM =================
 
   createForm() {
     this.designationForm = this.fb.group({
@@ -44,103 +54,159 @@ export class Designation implements OnInit {
     });
   }
 
-  // ========== LOAD ==========
+  // ================= LOAD =================
 
   loadDesignations() {
-     this.refresh$.next();
-    
+    this.refresh$.next(Date.now());
   }
 
   loadDepartments() {
     this.masterService.getAllDepartments().subscribe((res: any) => {
       this.departmentList = res;
+      this.departmentStatusMap = res.reduce(
+        (map: Record<number, boolean>, dept: any) => {
+          map[dept.departmentId] = dept.isActive ?? true;
+          return map;
+        },
+        {}
+      );
     });
   }
 
-  // ========== SAVE / UPDATE ==========
+  loadEmployeeCounts() {
+    this.employeeService.getAllEmployees().subscribe({
+      next: (employees) => {
+        this.employeeCountMap = employees.reduce(
+          (map: Record<number, number>, employee: any) => {
+            const designationId = Number(employee.designationId);
+            map[designationId] = (map[designationId] ?? 0) + 1;
+            return map;
+          },
+          {}
+        );
+      },
+      error: (err) => {
+        console.error('Failed to load employee counts', err);
+      },
+    });
+  }
+
+  // ================= SAVE / UPDATE =================
 
   onSave() {
 
-  if (this.designationForm.invalid) return;
-  
-  const obj = {
-    designationName: this.designationForm.value.designationName,
-    departmentId: Number(this.designationForm.value.departmentId)
-  };
+    if (this.designationForm.invalid) return;
 
-  console.log('Update Payload 👉', obj); // MUST CHECK
+    const obj = {
+      designationId: this.designationForm.value.designationId,
+      designationName: this.designationForm.value.designationName,
+      departmentId: Number(this.designationForm.value.departmentId)
+    };
 
-  if (this.isEditMode) {
+    console.log("Payload 👉", obj);
 
-    this.masterService.updateDesignation(obj).subscribe({
-      next: () => {
-        alert('Designation Updated successfully');
-        this.loadDesignations();
-        this.designationForm.reset();
-        this.isEditMode = false;
-      },
-      error: (err: any) => {
-        console.log(err);
-        alert(err.error || err.message || 'Update failed');
-      }
-    });
+    if (this.isEditMode) {
 
-  } else {
+      this.masterService.updateDesignation(obj.designationId, obj).subscribe({
+        next: () => {
+          this.loadDesignations();
+          this.loadEmployeeCounts();
+          this.resetForm();
+        },
+        error: (err:any) => {
+          console.log(err);
+        }
+      });
 
-    this.masterService.saveDesignation(obj).subscribe({
-      next: () => {
-        alert('Designation Saved successfully');
-        this.loadDesignations();
-        this.designationForm.reset();
-        this.isLoading.set(false);
-      },
-      error: () => {
-        alert('Save failed');
-        this.isLoading.set(false);
-      }
-    });
+    }
+    else {
+
+      this.masterService.saveDesignation(obj).subscribe({
+        next: () => {
+          this.loadDesignations();
+          this.loadEmployeeCounts();
+          this.resetForm();
+        },
+        error: () => {
+
+        }
+      });
+
+    }
 
   }
-}
 
-
-  // ========== EDIT ==========
+  // ================= EDIT =================
 
   onEdit(item: any) {
+
     this.isEditMode = true;
-    this.isLoading.set(true);
-    this.designationForm.patchValue(item);
-      setTimeout(() => this.isLoading.set(false), 500); 
+
+    this.designationForm.patchValue({
+      designationId: item.designationId,
+      designationName: item.designationName,
+      departmentId: item.departmentId
+    });
 
   }
 
-  // ========== DELETE ==========
+  // ================= DELETE =================
 
   onDelete(id: number) {
 
-  const isDelete = confirm('Are you sure you want to delete this designation?');
+    const isDelete = confirm("Are you sure you want to delete this designation?");
 
-  if (isDelete) {
-    this.masterService.deleteDesignationById(id).subscribe({
-      next: () => {
+    if (isDelete) {
 
-        alert('Designation deleted successfully ✅');
+      this.employeeService.getAllEmployees().subscribe({
 
-        // this.loadDesignations();     // auto refresh list
-        this.resetForm();            // optional reset form
-      },
-      error: (err: any) => {
-        alert(err.error || 'Something went wrong ❌');
-      }
-    });
+        next: (employees) => {
+          const isDesignationAssigned = employees.some(
+            (employee) => Number(employee.designationId) === Number(id)
+          );
+
+          if (isDesignationAssigned) {
+            this.deleteMessage =
+              'This designation is assigned to employees. Remove or update those employees before deleting.';
+            return;
+          }
+
+          this.deleteMessage = '';
+          this.masterService.deleteDesignationById(id).subscribe({
+
+            next: () => {
+              console.log('Designation deleted:', id);
+              this.loadEmployeeCounts();
+              // trigger refresh directly to ensure async pipe gets a new emission
+              this.refresh$.next(Date.now());
+
+            },
+
+            error: (err) => {
+              console.log('FULL ERROR =>', err);
+              console.log('STATUS =>', err.status);
+              console.log('ERROR =>', err.error);
+            }
+
+          });
+
+        },
+
+        error: (err) => {
+          console.log('Employee list check failed =>', err);
+        }
+
+      });
+
+    }
+
   }
 
-}
-
-  // ========== RESET ==========
+  // ================= RESET =================
 
   resetForm() {
     this.isEditMode = false;
+
     this.designationForm.reset({
       designationId: 0,
       designationName: '',
@@ -148,5 +214,9 @@ export class Designation implements OnInit {
     });
   }
 
-  
+  getDepartmentStatus(departmentId: number): string {
+    const isActive = this.departmentStatusMap[departmentId];
+    return isActive ? 'Active' : 'Inactive';
+  }
+
 }

@@ -1,0 +1,126 @@
+<section class="settings-page">
+  <div class="page-head">
+    <div>
+      <p>Settings</p>
+      <h2>Application Preferences</h2>
+      <span>Manage local UI settings and system health.</span>
+    </div>
+    <button type="button" (click)="checkApiStatus()">
+      <i class="fa-solid fa-heart-pulse"></i>
+      Check API
+    </button>
+  </div>
+
+  <div *ngIf="statusMessage" class="info-message">{{ statusMessage }}</div>
+
+  <div class="settings-grid">
+    <section class="settings-card">
+      <div class="card-head">
+        <i class="fa-solid fa-sliders"></i>
+        <div>
+          <h3>UI Preferences</h3>
+          <span>Saved in this browser.</span>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <label>
+          Company Name
+          <input type="text" [(ngModel)]="settings.companyName" />
+        </label>
+
+        <label>
+          Default Page
+          <select [(ngModel)]="settings.defaultPage">
+            <option value="dashboard">Dashboard</option>
+            <option value="employee-list">Employee List</option>
+            <option value="reports">Reports</option>
+          </select>
+        </label>
+
+        <label>
+          Records Per Page
+          <input type="number" min="5" max="100" step="5" [(ngModel)]="settings.recordsPerPage" />
+        </label>
+
+        <label>
+          Accent Color
+          <input type="color" [(ngModel)]="settings.accentColor" />
+        </label>
+      </div>
+
+      <div class="toggle-list">
+        <label>
+          <input type="checkbox" [(ngModel)]="settings.compactTables" />
+          Compact tables
+        </label>
+        <label>
+          <input type="checkbox" [(ngModel)]="settings.autoRefresh" />
+          Auto refresh dashboard
+        </label>
+        <label>
+          <input type="checkbox" [(ngModel)]="settings.emailUpdates" />
+          Email update reminders
+        </label>
+      </div>
+
+      <div class="action-row">
+        <button type="button" class="primary" (click)="saveSettings()">Save Settings</button>
+        <button type="button" (click)="resetSettings()">Reset</button>
+      </div>
+    </section>
+
+    <aside class="side-stack">
+      <section class="settings-card">
+        <div class="card-head">
+          <i class="fa-solid fa-wifi"></i>
+          <div>
+            <h3>API Status</h3>
+            <span>{{ apiCheckedAt || 'Not checked yet' }}</span>
+          </div>
+        </div>
+
+        <div class="status-pill" [class.online]="apiStatus === 'Online'" [class.offline]="apiStatus === 'Offline'">
+          {{ apiStatus }}
+        </div>
+        <p class="muted">{{ employeeCount }} employee records available.</p>
+      </section>
+
+      <section class="settings-card">
+        <div class="card-head">
+          <i class="fa-solid fa-user-shield"></i>
+          <div>
+            <h3>Current Session</h3>
+            <span>{{ loggedEmpData.role || 'No role found' }}</span>
+          </div>
+        </div>
+
+        <div class="session-list">
+          <div>
+            <span>Name</span>
+            <strong>{{ loggedEmpData.name || 'N/A' }}</strong>
+          </div>
+          <div>
+            <span>Email</span>
+            <strong>{{ loggedEmpData.email || 'N/A' }}</strong>
+          </div>
+          <div>
+            <span>Contact</span>
+            <strong>{{ loggedEmpData.contactNo || 'N/A' }}</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="settings-card danger-card">
+        <div class="card-head">
+          <i class="fa-solid fa-broom"></i>
+          <div>
+            <h3>Local Cleanup</h3>
+            <span>Only clears UI preferences.</span>
+          </div>
+        </div>
+        <button type="button" (click)="clearLocalPreferences()">Clear Preferences</button>
+      </section>
+    </aside>
+  </div>
+</section>

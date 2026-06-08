@@ -1,5 +1,3 @@
-import { Department } from './../Pages/department/department';
-import { Designation } from './../Pages/designation/designation';
 export class DepartmentModel {
     departmentId: number = 0;
     departmentName: string = "";

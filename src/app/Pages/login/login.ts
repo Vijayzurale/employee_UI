@@ -1,12 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { Router, RouterLink } from '@angular/router';
+import { API_BASE_URL } from '../../core/api.config';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, HttpClientModule],
+  imports: [FormsModule],
   templateUrl: './login.html',
   styleUrls: ['./login.css']
 })
@@ -22,24 +23,28 @@ export class Login {
 
   onlogin() {
     this.http.post<any>(
-      'https://localhost:7248/api/EmployeeMaster/login',
+      API_BASE_URL + 'EmployeeMaster/login',
       this.loginobj
     ).subscribe({
       next: (result: any) => {
-        alert('Login success');
         console.log(result);
-        debugger;
-        localStorage.setItem('empLoginUser', JSON.stringify(result.data));
-         if(result.data.role === "Employee"){ 
-          this.router.navigateByUrl("New-Employee/"+result.data.employeeId);
-         }else{
-            this.router.navigateByUrl("dashboard");
-         }
-        this.router.navigate(['dashboard']);
+        const loginUser = {
+          ...result.data,
+          token: result.data?.token ?? result.token,
+        };
+
+        localStorage.setItem('empLoginUser', JSON.stringify(loginUser));
+
+        if (loginUser.role === 'Employee') {
+          this.router.navigateByUrl('New-Employee/' + loginUser.employeeId);
+        } else {
+          this.router.navigateByUrl('dashboard');
+        }
       },
-      error: (err) => {
-        alert('Login failed');
+        error: (err) => {
+
         console.error(err);
+        alert('Login failed. Please check your credentials and try again.');
       }
     });
   }

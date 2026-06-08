@@ -1,7 +1,7 @@
 export class EmployeeModel {
 
   employeeId !: number;
-   name: string;
+  name: string;
   contactNo: string;
   email: string;
   city: string;
@@ -10,9 +10,9 @@ export class EmployeeModel {
   altContactNo: string;
   address: string;
   designationId: number;
-  
+  departmentId: number;
   role: string;
-
+  
   constructor() {
     this.employeeId = 0;
     this.name = '';
@@ -24,7 +24,7 @@ export class EmployeeModel {
     this.altContactNo = '';
     this.address = '';
     this.designationId = 0;
-   
+    this.departmentId = 0;
     this.role = '';
   }
 }

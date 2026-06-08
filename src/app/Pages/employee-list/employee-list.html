@@ -18,27 +18,23 @@
     </thead>
 
     <tbody>
-      @for(emp of EmployeeList(); track $index){
-        <tr>
-          <td>{{$index + 1}}</td>
-<td>
-    <a [routerLink]="['/employee-profile', emp.employeeId]" class="profile-link"
-          data-text="View Profile" >{{emp.name}}</a> </td>
-          <td>{{emp.contactNo}}</td>
-          <td>{{emp.email}}</td>
-          <td>{{emp.designationName}}</td>
-          <td>{{emp.departmentName}}</td>
-          <td>{{emp.city}}</td>
-         
-          <td>
-            <span class="role-badge">{{emp.role}}</span>
-          </td>
-          <td>
-            <button [routerLink]="'/New-Employee/' + emp.employeeId" class="edit-btn ">Edit</button>
-            <button class="delete-btn"  (click)="ondelete(emp.employeeId)">Delete</button>
-          </td>
-        </tr>
-      }
+      <tr *ngFor="let emp of EmployeeList(); let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ emp.name }}</td>
+        <td>{{ emp.contactNo }}</td>
+        <td>{{ emp.email }}</td>
+        <td>{{ emp.designationName }}</td>
+        <td>{{ emp.departmentName }}</td>
+        <td>{{ emp.city }}</td>
+
+        <td>
+          <span class="role-badge">{{ emp.role }}</span>
+        </td>
+        <td>
+          <button [routerLink]="'/New-Employee/' + emp.employeeId" class="edit-btn">Edit</button>
+          <button class="delete-btn" (click)="ondelete(emp.employeeId)">Delete</button>
+        </td>
+      </tr>
     </tbody>
   </table>
 

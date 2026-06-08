@@ -4,15 +4,13 @@ import { IEmployeeListModel } from '../models/Employee.Model';
 import { EmployeeModel } from '../models/Employee.Model';
 import { forkJoin } from 'rxjs';
 import { Observable } from 'rxjs';
+import { API_BASE_URL } from '../core/api.config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class EmployeeService {
-  updateEmployee(employeeId: number, newEmployeeObj:EmployeeModel) {
-    throw new Error('Method not implemented.');
-  }
-  apiUrl: string = "https://localhost:7248/api/";
+  apiUrl: string = API_BASE_URL;
   http =inject(HttpClient);
 
   saveEmployee(obj:EmployeeModel) {
@@ -28,6 +26,7 @@ export class EmployeeService {
   getEmpById(id: number) :Observable<EmployeeModel>{
     return this.http.get<EmployeeModel>(this.apiUrl+"EmployeeMaster/"+id);
   }
+
   updateEmp(employeeId: number, newEmployeeObj: EmployeeModel) {
     return this.http.put(this.apiUrl+"EmployeeMaster/"+employeeId, newEmployeeObj);
   }
@@ -39,7 +38,7 @@ getDashboardData() {
   return forkJoin({
     employees: this.http.get<any[]>(this.apiUrl + 'EmployeeMaster'),
     designations: this.http.get<any[]>(this.apiUrl + 'DesignationMaster'),
-    departments: this.http.get<any[]>(this.apiUrl + 'DepartmentMaster')
+    departments: this.http.get<any[]>(this.apiUrl + 'DepartmentMaster/GetAllDepartments')
   });
 }
 getDesignations() {
@@ -47,7 +46,7 @@ getDesignations() {
 }
 
 getDepartments() {
-  return this.http.get<any[]>(this.apiUrl + "DepartmentMaster");
+  return this.http.get<any[]>(this.apiUrl + "DepartmentMaster/GetAllDepartments");
 }
 
 

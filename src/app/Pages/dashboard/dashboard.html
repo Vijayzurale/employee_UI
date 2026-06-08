@@ -1,84 +1,175 @@
-
-
-
-
-<div class="container mt-4">
-
-    <h3 class="header">HR Dashboard</h3>
-
-    <!-- ===== CARDS ===== -->
-
-    <div class="row g-4 mb-4">
-
-        <div class="col-md-3 fw-bold text-center" >
-    <div class="dashboard-card card-blue">
-                <p>Total Employees</p>
-                <h2>{{ totalEmployees }}</h2>
-            </div>
-        </div>
-
-        <div class="col-md-3 fw-bold text-center">
-    <div class="dashboard-card card-green">
-                <p>Departments</p>
-                <h2>{{ totalDepartments }}</h2>
-            </div>
-        </div>
-
-        <div class="col-md-3 fw-bold text-center">
-    <div class="dashboard-card card-orange">
-                <p>Designations</p>
-                <h2>{{ totalDesignations }}</h2>
-            </div>
-        </div>
-
-        <div class="col-md-3 fw-bold text-center">
-    <div class="dashboard-card card-red">
-                <p>Active Employees</p>
-                <h2>{{ activeEmployees }}</h2>
-            </div>
-        </div>
-
+<section class="dashboard-page">
+  <div class="dashboard-hero">
+    <div>
+      <p class="eyebrow">Employee Overview</p>
+      <h1>HR Dashboard</h1>
+      <p class="hero-copy">
+        Track employee strength, department spread, and role coverage from one place.
+      </p>
     </div>
 
-    <!-- ===== EMPLOYEE TABLE ===== -->
+    <a routerLink="/New-Employee/0" class="hero-action">
+      <i class="fa-solid fa-user-plus"></i>
+      Add Employee
+    </a>
+  </div>
 
-    <div class="card shadow-sm">
-        <div class="card-header fw-bold text-center">
-            Employees Overview
+  <div *ngIf="isLoading" class="state-panel">
+    <p>Loading employee overview...</p>
+  </div>
+
+  <div *ngIf="!isLoading && errorMessage" class="state-panel error-state">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    <p>{{ errorMessage }}</p>
+    <button type="button" class="retry-btn" (click)="loadDashboardData()">Retry</button>
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage">
+    <div class="overview-grid">
+      <article *ngFor="let card of overviewCards; let i = index" class="dashboard-card {{ card.className }}">
+        <div class="card-icon">
+          <i class="fa-solid {{ card.icon }}"></i>
+        </div>
+        <div>
+          <p>{{ card.label }}</p>
+          <h2>{{ card.value }}</h2>
+          <span>{{ card.hint }}</span>
+        </div>
+      </article>
+    </div>
+
+    <div *ngIf="employees.length === 0" class="state-panel empty-state">
+      <i class="fa-solid fa-users-slash"></i>
+      <h3>No employees found</h3>
+      <p>Add employees to see the overview, role mix, and department insights here.</p>
+      <a routerLink="/New-Employee/0" class="retry-btn">Add Employee</a>
+    </div>
+
+    <div *ngIf="employees.length > 0" class="insight-layout">
+      <section class="panel employee-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">People</p>
+            <h2>Employees Overview</h2>
+            <small class="result-count">
+              Showing {{ filteredEmployees.length }} of {{ employees.length }}
+              <span *ngIf="lastUpdated">Updated {{ lastUpdated }}</span>
+            </small>
+          </div>
+          <div class="panel-actions">
+            <button type="button" class="panel-link ghost-link" (click)="loadEmployees()">
+              <i class="fa-solid fa-rotate-right"></i>
+              Refresh
+            </button>
+            <a routerLink="/employee-list" class="panel-link">View All</a>
+          </div>
         </div>
 
-        <table class="table table-hover mb-0">
+        <div class="filter-bar">
+          <label class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input
+              type="search"
+              placeholder="Search employee, email, department..."
+              [(ngModel)]="searchText"
+              (ngModelChange)="applyFilters()"
+            />
+          </label>
 
-            <thead class="table-light">
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Designation</th>
-                    <th>Department</th>
-                    <th>Role</th>
-                </tr>
+          <select [(ngModel)]="selectedRole" (ngModelChange)="applyFilters()">
+            <option value="All">All Roles</option>
+            <option *ngFor="let role of roleOptions; let i = index" [value]="role">{{ role }}</option>
+          </select>
+
+          <select [(ngModel)]="selectedDepartment" (ngModelChange)="applyFilters()">
+            <option value="All">All Departments</option>
+            <option *ngFor="let department of departmentOptions; let i = index" [value]="department">{{ department }}</option>
+          </select>
+
+          <button type="button" class="clear-btn" (click)="clearFilters()">Clear</button>
+        </div>
+
+        <div *ngIf="filteredEmployees.length === 0" class="empty-filter">
+          <i class="fa-solid fa-filter-circle-xmark"></i>
+          <p>No employees match your filters.</p>
+        </div>
+
+        <div *ngIf="filteredEmployees.length > 0" class="table-responsive">
+          <table class="table employee-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Designation</th>
+                <th>Department</th>
+                <th>Role</th>
+              </tr>
             </thead>
-
             <tbody>
-
-                @for (emp of employees; track emp.employeeId) {
-                <tr>
-                    <td>{{ emp.employeeId }}</td>
-                    <td>{{ emp.name }}</td>
-                    <td>{{ emp.designationName }}</td>
-                    <td>{{ emp.departmentName }}</td>
-                    <td>
-                        <span class="badge" [class.bg-success]="emp.role === 'Employee'"
-                            [class.bg-primary]="emp.role === 'HR'">
-                            {{ emp.role }}
-                        </span>
-                    </td>
-                </tr>
-                }
-
+              <tr *ngFor="let emp of filteredEmployees; let i = index">
+                <td>#{{ emp.employeeId }}</td>
+                <td>
+                  <div class="employee-name">
+                    <span>{{ emp.name.charAt(0) || 'E' }}</span>
+                    {{ emp.name || 'Unnamed Employee' }}
+                  </div>
+                </td>
+                <td>{{ emp.designationName || 'Not Assigned' }}</td>
+                <td>{{ emp.departmentName || 'Not Assigned' }}</td>
+                <td>
+                  <span
+                    class="role-badge"
+                    [class.employee-role]="emp.role === 'Employee'"
+                    [class.hr-role]="emp.role === 'HR'"
+                  >
+                    {{ emp.role || 'Not Assigned' }}
+                  </span>
+                </td>
+              </tr>
             </tbody>
-        </table>
+          </table>
+        </div>
+      </section>
 
+      <aside class="side-stack">
+        <section class="panel">
+          <div class="panel-heading compact">
+            <div>
+              <p class="eyebrow">Departments</p>
+              <h2>Top Teams</h2>
+            </div>
+          </div>
+
+          <div class="progress-list">
+            <div *ngFor="let department of departmentOverview; let i = index" class="progress-item">
+              <div class="progress-meta">
+                <span>{{ department.name }}</span>
+                <strong>{{ department.count }}</strong>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" [style.width.%]="department.percent"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading compact">
+            <div>
+              <p class="eyebrow">Roles</p>
+              <h2>Role Mix</h2>
+            </div>
+          </div>
+
+          <div class="role-list">
+            <button *ngFor="let role of roleOverview; let i = index" type="button" class="role-item" (click)="filterByRole(role.name)">
+              <span>{{ role.name }}</span>
+              <strong>{{ role.count }}</strong>
+              <small>{{ role.percent }}%</small>
+            </button>
+          </div>
+        </section>
+      </aside>
     </div>
-
-</div>
+  </div>
+</section>

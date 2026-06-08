@@ -1,1 +1,213 @@
 /* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+/* --- PREMIUM DESIGN SYSTEM VARIABLES --- */
+:root {
+  --font-family: 'Plus Jakarta Sans', 'Outfit', system-ui, sans-serif;
+  --bg-app: #f8fafc;
+  --bg-card: #ffffff;
+  
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  
+  --primary: #0f172a;
+  --accent: #2563eb;
+  --accent-light: #eff6ff;
+  
+  --success: #10b981;
+  --success-bg: #dcfce7;
+  --success-text: #15803d;
+  
+  --warning: #f59e0b;
+  --warning-bg: #fef9c3;
+  --warning-text: #a16207;
+  
+  --danger: #ef4444;
+  --danger-bg: #fee2e2;
+  --danger-text: #b91c1c;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- PROFESSIONAL TABLE AND WRAPPER LAYOUTS --- */
+.table-shell, .table-wrapper, .table-responsive {
+  width: 100% !important;
+  overflow-x: auto !important;
+  background-color: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
+  padding: 1.25rem !important;
+  margin-top: 1.5rem !important;
+  box-sizing: border-box !important;
+}
+
+/* Unified Professional Table */
+.data-table, .employee-table, .table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  text-align: left !important;
+  font-family: var(--font-family) !important;
+  border-spacing: 0 !important;
+}
+
+.data-table th, .employee-table th, .table th {
+  background-color: #f8fafc !important;
+  color: #475569 !important;
+  font-weight: 700 !important;
+  font-size: 0.775rem !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  padding: 0.875rem 1.25rem !important;
+  border-bottom: 2px solid var(--border-color) !important;
+}
+
+.data-table td, .employee-table td, .table td {
+  padding: 0.875rem 1.25rem !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  font-size: 0.875rem !important;
+  color: #334155 !important;
+  vertical-align: middle !important;
+  transition: background-color 0.15s ease !important;
+}
+
+.data-table tbody tr:hover td, 
+.employee-table tbody tr:hover td, 
+.table tbody tr:hover td {
+  background-color: #f1f5f9 !important;
+}
+
+.data-table tbody tr:last-child td, 
+.employee-table tbody tr:last-child td, 
+.table tbody tr:last-child td {
+  border-bottom: none !important;
+}
+
+/* --- PROFESSIONAL ACTION BUTTONS --- */
+.edit-btn, .primary-btn.update-btn {
+  background-color: var(--accent-light) !important;
+  color: var(--accent) !important;
+  border: 1px solid rgba(37, 99, 235, 0.1) !important;
+  border-radius: 6px !important;
+  padding: 5px 12px !important;
+  font-weight: 700 !important;
+  font-size: 0.775rem !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+}
+
+.edit-btn:hover {
+  background-color: var(--accent) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+}
+
+.delete-btn {
+  background-color: var(--danger-bg) !important;
+  color: var(--danger-text) !important;
+  border: 1px solid rgba(239, 68, 68, 0.1) !important;
+  border-radius: 6px !important;
+  padding: 5px 12px !important;
+  font-weight: 700 !important;
+  font-size: 0.775rem !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+}
+
+.delete-btn:hover {
+  background-color: var(--danger) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+}
+
+.primary-btn {
+  background-color: var(--primary) !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 6px !important;
+  padding: 8px 16px !important;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.primary-btn:hover {
+  background-color: #1e293b !important;
+  transform: translateY(-1px) !important;
+}
+
+.muted-btn {
+  background-color: #f1f5f9 !important;
+  color: #475569 !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 6px !important;
+  padding: 8px 16px !important;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.muted-btn:hover {
+  background-color: #e2e8f0 !important;
+}
+
+/* --- PROFESSIONAL BADGE STYLING --- */
+.status-badge, .role-badge, .badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0.25rem 0.625rem !important;
+  border-radius: 9999px !important;
+  font-size: 0.725rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em !important;
+  text-transform: uppercase !important;
+}
+
+.status-badge, .badge-approved, .badge-present {
+  background-color: var(--success-bg) !important;
+  color: var(--success-text) !important;
+}
+
+.status-badge.inactive, .badge-rejected, .badge-absent {
+  background-color: var(--danger-bg) !important;
+  color: var(--danger-text) !important;
+}
+
+.role-badge, .badge-pending, .badge-late {
+  background-color: var(--warning-bg) !important;
+  color: var(--warning-text) !important;
+}
+
+/* Specific overrides for old list designs to align titles */
+.table-title {
+  font-size: 1.5rem !important;
+  font-weight: 800 !important;
+  color: var(--text-main) !important;
+  margin-top: 0 !important;
+  margin-bottom: 1rem !important;
+  text-align: left !important;
+  text-decoration: none !important;
+  letter-spacing: -0.02em !important;
+}

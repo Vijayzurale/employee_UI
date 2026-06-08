@@ -1,0 +1,203 @@
+.settings-page {
+  padding: 24px;
+  color: #172033;
+  background: rgba(246, 249, 252, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  border-radius: 8px;
+  backdrop-filter: blur(14px);
+}
+
+.page-head,
+.settings-grid,
+.card-head,
+.action-row,
+.session-list div {
+  display: flex;
+}
+
+.page-head {
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.page-head p,
+.page-head h2,
+.settings-card h3 {
+  margin: 0;
+}
+
+.page-head p {
+  color: #1f6f8b;
+  font-weight: 800;
+}
+
+.page-head h2 {
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.page-head span,
+.card-head span,
+.muted,
+.session-list span {
+  color: #667085;
+}
+
+button,
+input,
+select {
+  min-height: 40px;
+  border: 0;
+  border-radius: 8px;
+}
+
+button {
+  padding: 0 14px;
+  color: #1f6f8b;
+  background: #eef6f8;
+  font-weight: 800;
+}
+
+button.primary {
+  color: #ffffff;
+  background: #1f6f8b;
+}
+
+.settings-grid {
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.settings-grid > .settings-card {
+  flex: 1 1 auto;
+}
+
+.settings-card,
+.info-message {
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 8px;
+}
+
+.info-message {
+  margin-bottom: 16px;
+  color: #1f6f8b;
+  font-weight: 800;
+}
+
+.card-head {
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.card-head i {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  color: #ffffff;
+  background: #1f6f8b;
+  border-radius: 8px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+label {
+  display: grid;
+  gap: 7px;
+  color: #344054;
+  font-weight: 800;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 0 12px;
+  background: #f4f7fa;
+}
+
+input[type='color'] {
+  padding: 4px;
+}
+
+.toggle-list {
+  display: grid;
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.toggle-list label {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+}
+
+.toggle-list input {
+  width: 18px;
+  min-height: 18px;
+}
+
+.action-row {
+  gap: 10px;
+}
+
+.side-stack {
+  display: grid;
+  flex: 0 0 360px;
+  gap: 18px;
+}
+
+.status-pill {
+  display: inline-flex;
+  padding: 8px 14px;
+  color: #92400e;
+  background: #fef3c7;
+  border-radius: 8px;
+  font-weight: 800;
+}
+
+.status-pill.online {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.status-pill.offline {
+  color: #b42318;
+  background: #fee2e2;
+}
+
+.session-list {
+  display: grid;
+  gap: 12px;
+}
+
+.session-list div {
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.danger-card .card-head i {
+  background: #b42318;
+}
+
+@media (max-width: 900px) {
+  .page-head,
+  .settings-grid {
+    flex-direction: column;
+  }
+
+  .side-stack {
+    width: 100%;
+    flex-basis: auto;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,190 @@
+<div class="attendance-container">
+  <div class="header-section">
+    <h2>Attendance Portal</h2>
+    <p class="subtitle">Track work hours, clock in/out, and monitor records</p>
+  </div>
+
+  <!-- Messages -->
+  <div *ngIf="message" class="alert-banner" [class.success]="isMessageSuccess" [class.error]="!isMessageSuccess">
+    <i class="fa-solid" [class.fa-circle-check]="isMessageSuccess"
+      [class.fa-circle-exclamation]="!isMessageSuccess"></i>
+    <span>{{ message }}</span>
+  </div>
+
+  <!-- EMPLOYEE VIEW -->
+  <div *ngIf="!isHR" class="employee-view">
+    <div class="dashboard-grid">
+      <!-- Clock Card -->
+      <div class="card clock-card">
+        <h3>Shift Timer</h3>
+        <p class="shift-hint">Standard shift: 9:00 AM - 6:00 PM</p>
+
+        <div class="timer-display">
+          <span class="time-elapsed">{{ todayDuration }}</span>
+          <span class="timer-lbl">Hours Worked Today</span>
+        </div>
+
+        <div class="action-buttons">
+          <button *ngIf="!isCheckedIn" class="btn btn-checkin" (click)="handleCheckIn()">
+            <i class="fa-solid fa-right-to-bracket"></i> Check In
+          </button>
+          <button *ngIf="isCheckedIn" class="btn btn-checkout" (click)="handleCheckOut()">
+            <i class="fa-solid fa-right-from-bracket"></i> Check Out
+          </button>
+        </div>
+
+        <div class="today-status" *ngIf="todayRecord">
+          <div class="status-item">
+            <span class="label">Checked In:</span>
+            <span class="val">{{ todayRecord.checkInTime }}</span>
+          </div>
+          <div class="status-item" *ngIf="todayRecord.checkOutTime">
+            <span class="label">Checked Out:</span>
+            <span class="val">{{ todayRecord.checkOutTime }}</span>
+          </div>
+          <div class="status-item">
+            <span class="label">Status:</span>
+            <span class="badge" [class.badge-present]="todayRecord.status === 'Present'"
+              [class.badge-late]="todayRecord.status === 'Late'">
+              {{ todayRecord.status }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Instructions & Details -->
+      <div class="card info-card">
+        <h3>Attendance Guidelines</h3>
+        <ul class="guide-list">
+          <li>
+            <i class="fa-solid fa-clock icon-blue"></i>
+            <div>
+              <strong>Timing Window:</strong> Check-in before 9:15 AM to be marked as <em>Present</em>. After 9:15 AM
+              will flag as <em>Late</em>.
+            </div>
+          </li>
+          <li>
+            <i class="fa-solid fa-mug-hot icon-orange"></i>
+            <div>
+              <strong>Break Hours:</strong> Standard 1-hour break is inclusive in the working duration calculations.
+            </div>
+          </li>
+          <li>
+            <i class="fa-solid fa-circle-question icon-green"></i>
+            <div>
+              <strong>Missed Punch:</strong> Please contact HR department if you forget to check out or require
+              adjustments.
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Personal Logs Grid -->
+    <div class="card logs-card">
+      <h3>My Attendance History</h3>
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Check In</th>
+              <th>Check Out</th>
+              <th>Duration (Hrs)</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let rec of myRecords">
+              <td>{{ rec.date }}</td>
+              <td>{{ rec.checkInTime }}</td>
+              <td>{{ rec.checkOutTime || '--' }}</td>
+              <td>{{ rec.durationHours ? rec.durationHours + ' hrs' : '--' }}</td>
+              <td>
+                <span class="badge" [class.badge-present]="rec.status === 'Present'"
+                  [class.badge-late]="rec.status === 'Late'">
+                  {{ rec.status }}
+                </span>
+              </td>
+            </tr>
+            <tr *ngIf="myRecords.length === 0">
+              <td colspan="5" class="empty-state">No attendance records found yet.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- HR VIEW -->
+  <div *ngIf="isHR" class="hr-view">
+    <!-- All Records Grid -->
+    <div class="card logs-card">
+      <h3>All Employee Attendance logs</h3>
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Employee ID</th>
+              <th>Name</th>
+              <th>Date</th>
+              <th>Check In</th>
+              <th>Check Out</th>
+              <th>Duration (Hrs)</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let rec of filteredRecords">
+              <td>{{ rec.employeeId }}</td>
+              <td class="emp-name">{{ rec.employeeName }}</td>
+              <td>{{ rec.date }}</td>
+              <td>{{ rec.checkInTime }}</td>
+              <td>{{ rec.checkOutTime || '--' }}</td>
+              <td>{{ rec.durationHours ? rec.durationHours + ' hrs' : '--' }}</td>
+              <td>
+                <span class="badge" [class.badge-present]="rec.status === 'Present'"
+                  [class.badge-late]="rec.status === 'Late'">
+                  {{ rec.status }}
+                </span>
+              </td>
+            </tr>
+            <tr *ngIf="filteredRecords.length === 0">
+              <td colspan="7" class="empty-state">No matching attendance records found.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Filter Panel -->
+    <div class="card filter-card">
+      <h3>Filter Records</h3>
+      <div class="filter-grid">
+        <div class="filter-group">
+          <label for="search">Employee Name / ID</label>
+          <input id="search" type="text" [(ngModel)]="searchText" (input)="applyFilters()" placeholder="Search..."
+            class="form-control" />
+        </div>
+        <div class="filter-group">
+          <label for="status">Status</label>
+          <select id="status" [(ngModel)]="selectedStatus" (change)="applyFilters()" class="form-control">
+            <option value="All">All Statuses</option>
+            <option value="Present">Present</option>
+            <option value="Late">Late</option>
+            <option value="Absent">Absent</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="date">Date</label>
+          <input id="date" type="date" [(ngModel)]="selectedDate" (change)="applyFilters()" class="form-control" />
+        </div>
+        <div class="filter-actions">
+          <button class="btn btn-secondary" (click)="clearFilters()">
+            <i class="fa-solid fa-rotate-left"></i> Reset
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
