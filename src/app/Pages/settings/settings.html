@@ -11,7 +11,7 @@
     </button>
   </div>
 
-  <div *ngIf="statusMessage" class="info-message">{{ statusMessage }}</div>
+  <div class="info-message" [hidden]="!statusMessage">{{ statusMessage }}</div>
 
   <div class="settings-grid">
     <section class="settings-card">

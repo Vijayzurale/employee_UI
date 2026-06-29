@@ -30,6 +30,7 @@ interface RoleOverview {
 
 @Component({
   selector: 'app-dashboard',
+  standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
@@ -81,7 +82,7 @@ export class DashboardComponent implements AfterViewInit {
       next: ({ employees, leaves }) => {
         this.employees = employees ?? [];
         this.totalEmployees = this.employees.length;
-        this.activeEmployees = this.employees.filter((e) => e.role === 'Employee').length;
+        this.activeEmployees = this.employees.filter((employee) => this.isEmployeeRole(employee.role)).length;
         this.totalDepartments = new Set(this.employees.map((e) => e.departmentName)).size;
         this.totalDesignations = new Set(this.employees.map((e) => e.designationName)).size;
         this.employeesOnLeaveToday = this.getEmployeesOnLeaveToday(leaves ?? []);
@@ -141,11 +142,8 @@ export class DashboardComponent implements AfterViewInit {
     this.totalEmployees = this.employees.length;
     this.totalDepartments = new Set(this.employees.map((employee) => employee.departmentName)).size;
     this.totalDesignations = new Set(this.employees.map((employee) => employee.designationName)).size;
-    this.activeEmployees = this.employees.filter(
-      (employee) => this.normalizeText(employee.role) === 'employee'
-    ).length;
-    this.hrEmployees = this.employees.filter((employee) => this.normalizeText(employee.role) === 'hr')
-      .length;
+    this.activeEmployees = this.employees.filter((employee) => this.isEmployeeRole(employee.role)).length;
+    this.hrEmployees = this.countHrMembers();
     this.employeeCoverage = this.getPercent(this.activeEmployees, this.totalEmployees);
 
     this.overviewCards = [
@@ -266,6 +264,51 @@ export class DashboardComponent implements AfterViewInit {
 
   private getPercent(value: number, total: number): number {
     return total ? Math.round((value / total) * 100) : 0;
+  }
+
+  private countHrMembers(): number {
+    const hrCount = this.employees.filter((employee) => this.isHrRole(employee.role)).length;
+    if (hrCount > 0) {
+      return hrCount;
+    }
+
+    const loginData = sessionStorage.getItem('empLoginUser');
+    if (!loginData) {
+      return hrCount;
+    }
+
+    try {
+      const loggedUser = JSON.parse(loginData);
+      if (!this.isHrRole(loggedUser?.role)) {
+        return hrCount;
+      }
+
+      const loggedEmployeeId = Number(loggedUser.employeeId);
+      const existing = this.employees.some((employee) => employee.employeeId === loggedEmployeeId);
+      return existing ? hrCount : hrCount + 1;
+    } catch {
+      return hrCount;
+    }
+  }
+
+  private isHrRole(value: string | null | undefined): boolean {
+    const normalized = this.normalizeText(value);
+    return (
+      normalized === 'hr' ||
+      normalized.includes('hr') ||
+      normalized.includes('human resource') ||
+      normalized.includes('human resources')
+    );
+  }
+
+  private isEmployeeRole(value: string | null | undefined): boolean {
+    const normalized = this.normalizeText(value);
+    return (
+      normalized === 'employee' ||
+      normalized.includes('employee') ||
+      normalized === 'staff' ||
+      normalized.includes('staff')
+    );
   }
 
   private getUniqueValues(values: string[]): string[] {

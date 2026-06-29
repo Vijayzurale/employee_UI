@@ -20,6 +20,7 @@ export class AttendanceComponent implements OnInit {
   // Today's status (for Employee)
   todayRecord: AttendanceRecord | null = null;
   isCheckedIn = false;
+  isOnLeaveToday = false;
   todayDuration = '00:00:00';
   private timerInterval: any;
 
@@ -37,7 +38,7 @@ export class AttendanceComponent implements OnInit {
   isMessageSuccess = true;
 
   ngOnInit(): void {
-    const localData = localStorage.getItem('empLoginUser');
+    const localData = sessionStorage.getItem('empLoginUser');
     if (localData) {
       this.loggedUser = JSON.parse(localData);
       // In backend, role might be uppercase 'HR' or 'Employee'
@@ -65,6 +66,14 @@ export class AttendanceComponent implements OnInit {
         }
       });
 
+      this.service.isOnApprovedLeaveToday(empId).subscribe((isOnLeave) => {
+        this.isOnLeaveToday = isOnLeave;
+        if (isOnLeave) {
+          this.isCheckedIn = false;
+          this.stopTimer();
+        }
+      });
+
       this.service.getAttendanceByEmployee(empId).subscribe((res) => {
         this.myRecords = res;
       });
@@ -75,6 +84,11 @@ export class AttendanceComponent implements OnInit {
     if (!this.loggedUser) return;
     const empId = this.loggedUser.employeeId || 101;
     const empName = this.loggedUser.name || 'Current Employee';
+
+    if (this.isOnLeaveToday) {
+      this.showMessage('You are on approved leave today, so check-in is blocked.', false);
+      return;
+    }
 
     this.service.checkIn(empId, empName).subscribe((res) => {
       this.todayRecord = res;

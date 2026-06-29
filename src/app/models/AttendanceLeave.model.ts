@@ -6,7 +6,7 @@ export interface AttendanceRecord {
   checkInTime: string; // HH:MM:SS AM/PM or similar
   checkOutTime?: string;
   durationHours?: number;
-  status: 'Present' | 'Absent' | 'Late';
+  status: 'Present' | 'Absent' | 'Late' | 'On Leave';
 }
 
 export interface LeaveRequest {

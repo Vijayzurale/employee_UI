@@ -1,8 +1,9 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AttendanceLeaveService } from '../../services/attendance-leave';
 import { LeaveRequest } from '../../models/AttendanceLeave.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-leave',
@@ -11,8 +12,9 @@ import { LeaveRequest } from '../../models/AttendanceLeave.model';
   templateUrl: './leave.html',
   styleUrl: './leave.css',
 })
-export class LeaveComponent implements OnInit {
+export class LeaveComponent implements OnInit, OnDestroy {
   private service = inject(AttendanceLeaveService);
+  private employeeDataChangedSubscription?: Subscription;
 
   loggedUser: any = null;
   isHR = false;
@@ -38,13 +40,21 @@ export class LeaveComponent implements OnInit {
   isMessageSuccess = true;
 
   ngOnInit(): void {
-    const localData = localStorage.getItem('empLoginUser');
+    const localData = sessionStorage.getItem('empLoginUser');
     if (localData) {
       this.loggedUser = JSON.parse(localData);
       this.isHR = this.loggedUser?.role?.toUpperCase() === 'HR';
     }
 
     this.loadData();
+
+    this.employeeDataChangedSubscription = this.service.employeeDataChanged$.subscribe(() => {
+      this.loadData();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.employeeDataChangedSubscription?.unsubscribe();
   }
 
   loadData(): void {

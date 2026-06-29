@@ -33,7 +33,7 @@ export class Login {
           token: result.data?.token ?? result.token,
         };
 
-        localStorage.setItem('empLoginUser', JSON.stringify(loginUser));
+        sessionStorage.setItem('empLoginUser', JSON.stringify(loginUser));
 
         if (loginUser.role === 'Employee') {
           this.router.navigateByUrl('New-Employee/' + loginUser.employeeId);

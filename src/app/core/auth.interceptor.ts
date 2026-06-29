@@ -5,7 +5,7 @@ import { API_BASE_URL } from './api.config';
 const TOKEN_KEYS = ['token', 'jwt', 'jwtToken', 'accessToken', 'access_token', 'authToken'];
 
 function getJwtToken(): string {
-  const localData = localStorage.getItem('empLoginUser');
+  const localData = sessionStorage.getItem('empLoginUser');
 
   if (!localData) {
     return '';

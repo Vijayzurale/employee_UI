@@ -25,12 +25,23 @@
         </div>
 
         <div class="action-buttons">
-          <button *ngIf="!isCheckedIn" class="btn btn-checkin" (click)="handleCheckIn()">
+          <button *ngIf="!isCheckedIn && !isOnLeaveToday" class="btn btn-checkin" (click)="handleCheckIn()">
             <i class="fa-solid fa-right-to-bracket"></i> Check In
           </button>
-          <button *ngIf="isCheckedIn" class="btn btn-checkout" (click)="handleCheckOut()">
+          <button *ngIf="isCheckedIn && !isOnLeaveToday" class="btn btn-checkout" (click)="handleCheckOut()">
             <i class="fa-solid fa-right-from-bracket"></i> Check Out
           </button>
+        </div>
+
+        <div *ngIf="isOnLeaveToday" class="today-status leave-alert">
+          <div class="status-item">
+            <span class="label">Status:</span>
+            <span class="badge badge-approved">On Leave</span>
+          </div>
+          <div class="status-item">
+            <span class="label">Action:</span>
+            <span class="val">Check-in is blocked while approved leave is active.</span>
+          </div>
         </div>
 
         <div class="today-status" *ngIf="todayRecord">
@@ -102,7 +113,8 @@
               <td>{{ rec.durationHours ? rec.durationHours + ' hrs' : '--' }}</td>
               <td>
                 <span class="badge" [class.badge-present]="rec.status === 'Present'"
-                  [class.badge-late]="rec.status === 'Late'">
+                  [class.badge-late]="rec.status === 'Late'"
+                  [class.badge-approved]="rec.status === 'On Leave'">
                   {{ rec.status }}
                 </span>
               </td>
@@ -144,7 +156,8 @@
               <td>{{ rec.durationHours ? rec.durationHours + ' hrs' : '--' }}</td>
               <td>
                 <span class="badge" [class.badge-present]="rec.status === 'Present'"
-                  [class.badge-late]="rec.status === 'Late'">
+                  [class.badge-late]="rec.status === 'Late'"
+                  [class.badge-approved]="rec.status === 'On Leave'">
                   {{ rec.status }}
                 </span>
               </td>

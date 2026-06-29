@@ -207,8 +207,8 @@ export class Reports implements OnInit {
 
   private prepareReport(): void {
     const total = this.filteredEmployees.length;
-    const activeEmployees = this.filteredEmployees.filter((item) => this.normalizeText(item.role) === 'employee').length;
-    const hrMembers = this.filteredEmployees.filter((item) => this.normalizeText(item.role) === 'hr').length;
+    const activeEmployees = this.filteredEmployees.filter((item) => this.isEmployeeRole(item.role)).length;
+    const hrMembers = this.filteredEmployees.filter((item) => this.isHrRole(item.role)).length;
     const topDepartment = this.getBreakdown(this.filteredEmployees.map((item) => item.departmentName))[0]?.name ?? 'N/A';
 
     this.metrics = [
@@ -234,6 +234,26 @@ export class Reports implements OnInit {
     return Array.from(map.entries())
       .map(([name, count]) => ({ name, count, percent: total ? Math.round((count / total) * 100) : 0 }))
       .sort((a, b) => b.count - a.count);
+  }
+
+  private isHrRole(value: string | null | undefined): boolean {
+    const normalized = this.normalizeText(value);
+    return (
+      normalized === 'hr' ||
+      normalized.includes('hr') ||
+      normalized.includes('human resource') ||
+      normalized.includes('human resources')
+    );
+  }
+
+  private isEmployeeRole(value: string | null | undefined): boolean {
+    const normalized = this.normalizeText(value);
+    return (
+      normalized === 'employee' ||
+      normalized.includes('employee') ||
+      normalized === 'staff' ||
+      normalized.includes('staff')
+    );
   }
 
   private getUniqueValues(values: string[]): string[] {

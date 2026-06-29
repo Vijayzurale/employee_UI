@@ -15,7 +15,7 @@ export class Header {
   loggedEmpData:EmployeeModel = new EmployeeModel();
 
   constructor() {
-    const localData = localStorage.getItem('empLoginUser');
+    const localData = sessionStorage.getItem('empLoginUser');
     if (localData !== null) {
       this.loggedEmpData = JSON.parse(localData);
     }
@@ -24,7 +24,7 @@ export class Header {
     this.collapsed = !this.collapsed;
   }
   onLogOff() {
-    localStorage.removeItem('empLoginUser');
+    sessionStorage.removeItem('empLoginUser');
     this.router.navigateByUrl('/home');
   }
 }

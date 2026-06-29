@@ -3,6 +3,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { IEmployeeListModel } from '../../models/Employee.Model';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AttendanceLeaveService } from '../../services/attendance-leave';
 
 @Component({
   selector: 'app-employee-list',
@@ -24,6 +25,7 @@ export class EmployeeList implements OnInit {
   EmployeeList = signal<IEmployeeListModel[]>([]);
 
   EmployeeService = inject(EmployeeService);
+  attendanceLeaveService = inject(AttendanceLeaveService);
 
   ngOnInit(): void {
     this.getAllEmployees();
@@ -59,7 +61,15 @@ export class EmployeeList implements OnInit {
 
         next: () => {
 
-          this.getAllEmployees();
+          this.attendanceLeaveService.removeEmployeeData(id).subscribe({
+            next: () => {
+              this.getAllEmployees();
+            },
+            error: (err) => {
+              console.log(err);
+              this.getAllEmployees();
+            }
+          });
 
         },
 

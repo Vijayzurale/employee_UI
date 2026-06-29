@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { AttendanceRecord, LeaveRequest } from '../models/AttendanceLeave.model';
 
 @Injectable({
@@ -8,6 +8,8 @@ import { AttendanceRecord, LeaveRequest } from '../models/AttendanceLeave.model'
 export class AttendanceLeaveService {
   private readonly ATTENDANCE_KEY = 'emp_attendance_records';
   private readonly LEAVE_KEY = 'emp_leave_requests';
+  private readonly employeeDataChangedSubject = new Subject<number>();
+  readonly employeeDataChanged$ = this.employeeDataChangedSubject.asObservable();
 
   constructor() {
     this.seedMockData();
@@ -23,10 +25,59 @@ export class AttendanceLeaveService {
     return of(todayRecord || null);
   }
 
+  // Check whether the employee is on approved leave today
+  isOnApprovedLeaveToday(employeeId: number): Observable<boolean> {
+    const requests = this.getRecords<LeaveRequest>(this.LEAVE_KEY);
+    const todayStr = this.getTodayDateString();
+    const onLeave = requests.some((request) => {
+      return (
+        request.employeeId === employeeId &&
+        request.status === 'Approved' &&
+        request.startDate <= todayStr &&
+        todayStr <= request.endDate
+      );
+    });
+
+    return of(onLeave);
+  }
+
   // Check-In
   checkIn(employeeId: number, employeeName: string): Observable<AttendanceRecord> {
     const records = this.getRecords<AttendanceRecord>(this.ATTENDANCE_KEY);
     const todayStr = this.getTodayDateString();
+
+    const approvedLeave = this.getRecords<LeaveRequest>(this.LEAVE_KEY).find((request) => {
+      return (
+        request.employeeId === employeeId &&
+        request.status === 'Approved' &&
+        request.startDate <= todayStr &&
+        todayStr <= request.endDate
+      );
+    });
+
+    if (approvedLeave) {
+      const leaveRecord: AttendanceRecord = {
+        attendanceId: records.length + 1,
+        employeeId,
+        employeeName,
+        date: todayStr,
+        checkInTime: '--',
+        checkOutTime: '--',
+        durationHours: 0,
+        status: 'On Leave',
+      };
+
+      const existingLeaveRecord = records.find(
+        (record) => record.employeeId === employeeId && record.date === todayStr
+      );
+
+      if (!existingLeaveRecord) {
+        records.push(leaveRecord);
+        this.saveRecords(this.ATTENDANCE_KEY, records);
+      }
+
+      return of(existingLeaveRecord || leaveRecord);
+    }
 
     // Check if already checked in
     const existing = records.find(
@@ -42,7 +93,7 @@ export class AttendanceLeaveService {
     // Determine status: Late if check-in is after 09:15 AM
     let status: 'Present' | 'Late' = 'Present';
     const limitTime = new Date();
-    limitTime.setHours(9, 15, 0, 0);
+    limitTime.setHours(12, 0, 0, 0);
     if (now.getTime() > limitTime.getTime()) {
       status = 'Late';
     }
@@ -157,6 +208,21 @@ export class AttendanceLeaveService {
     requests[index].status = status;
     this.saveRecords(this.LEAVE_KEY, requests);
     return of(requests[index]);
+  }
+
+  // Remove all records related to a deleted employee
+  removeEmployeeData(employeeId: number): Observable<void> {
+    const attendanceRecords = this.getRecords<AttendanceRecord>(this.ATTENDANCE_KEY);
+    const leaveRequests = this.getRecords<LeaveRequest>(this.LEAVE_KEY);
+
+    const filteredAttendance = attendanceRecords.filter((record) => record.employeeId !== employeeId);
+    const filteredLeaves = leaveRequests.filter((request) => request.employeeId !== employeeId);
+
+    this.saveRecords(this.ATTENDANCE_KEY, filteredAttendance);
+    this.saveRecords(this.LEAVE_KEY, filteredLeaves);
+    this.employeeDataChangedSubject.next(employeeId);
+
+    return of(void 0);
   }
 
   // Helper local storage access

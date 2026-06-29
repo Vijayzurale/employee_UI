@@ -80,7 +80,7 @@ export class Settings implements OnInit {
   }
 
   private loadSession(): void {
-    const localData = localStorage.getItem('empLoginUser');
+    const localData = sessionStorage.getItem('empLoginUser');
 
     if (localData) {
       this.loggedEmpData = JSON.parse(localData);
