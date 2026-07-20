@@ -132,8 +132,24 @@ export class AttendanceLeaveService {
     // Calculate duration
     try {
       const today = new Date();
-      const [inHours, inMinutes, inSeconds] = record.checkInTime.replace(/[AP]M/i, '').trim().split(':');
-      const inDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), parseInt(inHours, 10), parseInt(inMinutes, 10), parseInt(inSeconds || '0', 10));
+      const timeStr = record.checkInTime;
+      const isPM = /PM/i.test(timeStr);
+      const isAM = /AM/i.test(timeStr);
+      const [inHoursStr, inMinutes, inSecondsStr] = timeStr.replace(/[AP]M/i, '').trim().split(':');
+      let inHours = parseInt(inHoursStr, 10);
+      if (isPM && inHours < 12) {
+        inHours += 12;
+      } else if (isAM && inHours === 12) {
+        inHours = 0;
+      }
+      const inDate = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate(),
+        inHours,
+        parseInt(inMinutes, 10),
+        parseInt(inSecondsStr || '0', 10)
+      );
 
       const diffMs = now.getTime() - inDate.getTime();
       const diffHours = Math.round((diffMs / (1000 * 60 * 60)) * 100) / 100;
